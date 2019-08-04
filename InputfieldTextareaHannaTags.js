@@ -61,7 +61,7 @@
 		var open_tag = ProcessWire.config.InputfieldTextareaHannaTags.open_tag;
 		var close_tag = ProcessWire.config.InputfieldTextareaHannaTags.close_tag;
 
-		$('.InputfieldTextareaHannaTags button').click(function() {
+		$(document).on('click', '.InputfieldTextareaHannaTags button', function() {
 			var tag = open_tag + $(this).text() + close_tag;
 			$(this).siblings('textarea').insertAtCaret(tag).focus();
 		});
