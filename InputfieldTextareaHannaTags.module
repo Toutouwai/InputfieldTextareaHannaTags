@@ -66,7 +66,7 @@ class InputfieldTextareaHannaTags extends InputfieldTextarea {
 	 */
 	public function getHannaTags() {
 		$tags = array();
-		$sql = "SELECT name, code FROM hanna_code ORDER BY name";
+		$sql = "SELECT name FROM hanna_code ORDER BY name";
 		$query = $this->wire('database')->prepare($sql);
 		$query->execute();
 		while($row = $query->fetch(\PDO::FETCH_NUM)) {
