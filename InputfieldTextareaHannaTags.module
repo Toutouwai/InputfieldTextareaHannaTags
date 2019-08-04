@@ -1,0 +1,78 @@
+<?php namespace ProcessWire;
+
+class InputfieldTextareaHannaTags extends InputfieldTextarea {
+
+	/**
+	 * Textarea Hanna Tags
+	 *
+	 * @author Robin Sallis
+	 *
+	 * ProcessWire 3.x
+	 * Copyright (C) 2011 by Ryan Cramer
+	 * Licensed under GNU/GPL v2, see LICENSE.TXT
+	 *
+	 * http://www.processwire.com
+	 * http://www.ryancramer.com
+	 *
+	 */
+
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'Textarea Hanna Tags',
+			'version' => '0.1.0',
+			'summary' => 'Textarea with buttons for easy insertion of Hanna Code tags.',
+			'author' => 'Robin Sallis',
+			'icon' => 'sun-o',
+			'requires' => 'ProcessWire>=3.0.0, TextformatterHannaCode'
+		);
+	}
+
+	/**
+	 * Called before render()
+	 *
+	 * @param Inputfield $parent
+	 * @param bool $renderValueMode
+	 * @return bool
+	 *
+	 */
+	public function renderReady(Inputfield $parent = null, $renderValueMode = false) {
+		$settings = array();
+		$hc_config = $this->wire('modules')->getModuleConfigData('TextformatterHannaCode');
+		$settings['open_tag'] = !empty($hc_config['openTag']) ? $hc_config['openTag'] : \TextformatterHannaCode::DEFAULT_OPEN_TAG;
+		$settings['close_tag'] = !empty($hc_config['closeTag']) ? $hc_config['closeTag'] : \TextformatterHannaCode::DEFAULT_CLOSE_TAG;
+		$this->wire('config')->js($this->className, $settings);
+		return parent::renderReady($parent, $renderValueMode);
+	}
+
+	/**
+	 * Render inputfield
+	 *
+	 * @return string
+	 *
+	 */
+	public function render() {
+		$markup = '';
+		$tags = $this->getHannaTags();
+		foreach($tags as $tag) {
+			$markup .= "<button type='button'>$tag</button>";
+		}
+		return $markup . parent::render();
+	}
+
+	/**
+	 * Get Hanna Code tags from database
+	 *
+	 * @return array
+	 */
+	public function getHannaTags() {
+		$tags = array();
+		$sql = "SELECT name, code FROM hanna_code ORDER BY name";
+		$query = $this->wire('database')->prepare($sql);
+		$query->execute();
+		while($row = $query->fetch(\PDO::FETCH_NUM)) {
+			$tags[] = $row[0];
+		}
+		return $tags;
+	}
+
+}
